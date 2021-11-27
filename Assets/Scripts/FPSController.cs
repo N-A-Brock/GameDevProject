@@ -39,6 +39,21 @@ public class FPSController : MonoBehaviour
         cc = GetComponent<CapsuleCollider>();
     }
 
+    void FixedUpdate()
+    {
+        //Movement/Vision
+        if (cameraScript.activeCamera == cameraScript.fpCamera)
+        {
+            FpMove();
+            FpLook();
+        }
+        else if (cameraScript.activeCamera == cameraScript.tpCamera)
+        {
+            TpMove();
+            TpLook();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -57,19 +72,6 @@ public class FPSController : MonoBehaviour
             movementSpeed = walkSpeed;
             
         }
-
-        //Movement/Vision
-        if(cameraScript.activeCamera == cameraScript.fpCamera)
-        {
-            FpMove();
-            FpLook();
-        }
-        else if(cameraScript.activeCamera == cameraScript.tpCamera)
-        {
-            TpMove();
-            TpLook();
-        }
-        
 
         //Jump
         if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position, Vector3.down, 1.5f))
@@ -170,23 +172,36 @@ public class FPSController : MonoBehaviour
 
     }
 
+    public Vector2 MovementInput()
+    {
+        float x, z;
+        x = Input.GetAxis("Horizontal");
+        z = Input.GetAxis("Vertical");
+
+        return (new Vector2(x, z));
+    }
+
+    public void CharacterMove(Vector3 direction)
+    {
+        rb.AddForce(direction);
+    }
     public void FpMove()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            this.transform.Translate(Vector3.left * Time.deltaTime * movementSpeed, Space.Self);
+            rb.AddForce(Vector3.left * movementSpeed);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            this.transform.Translate(Vector3.right * Time.deltaTime * movementSpeed, Space.Self);
+            rb.AddForce(Vector3.right * movementSpeed);
         }
         if (Input.GetKey(KeyCode.W))
         {
-            this.transform.Translate(Vector3.forward * Time.deltaTime * movementSpeed, Space.Self);
+            rb.AddForce(Vector3.forward * movementSpeed);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            this.transform.Translate(Vector3.back * Time.deltaTime * movementSpeed, Space.Self);
+            rb.AddForce(Vector3.back * movementSpeed);
         }
     }
 
