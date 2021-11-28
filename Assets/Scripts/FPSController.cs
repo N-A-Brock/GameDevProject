@@ -27,7 +27,7 @@ public class FPSController : MonoBehaviour
 
     private float rY, rX; // X is left right, Y is up down.
 
-    private Vector3 previousPosition;
+    private Vector3 movementDirection;
 
     Rigidbody rb;
     CapsuleCollider cc;
@@ -42,24 +42,12 @@ public class FPSController : MonoBehaviour
     void FixedUpdate()
     {
         //Movement/Vision
-        if (cameraScript.activeCamera == cameraScript.fpCamera)
-        {
-            FpMove();
-            FpLook();
-        }
-        else if (cameraScript.activeCamera == cameraScript.tpCamera)
-        {
-            TpMove();
-            TpLook();
-        }
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        //tpMove shit
-        Debug.Log(previousPosition);
-        previousPosition = this.transform.position;
 
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
@@ -172,19 +160,32 @@ public class FPSController : MonoBehaviour
 
     }
 
-    public Vector2 MovementInput()
+    public Vector3 MovementInput()
     {
         float x, z;
         x = Input.GetAxis("Horizontal");
         z = Input.GetAxis("Vertical");
 
-        return (new Vector2(x, z));
+        return (new Vector3(x, 0, z));
+    }
+
+    public void DirectionOutput(Vector3 input)
+    {
+        if (cameraScript.activeCamera == cameraScript.fpCamera)
+        {
+            movementDirection = input * movementSpeed;
+        }
+        else if (cameraScript.activeCamera == cameraScript.tpCamera)
+        {
+            movementDirection = input;
+        }
     }
 
     public void CharacterMove(Vector3 direction)
     {
         rb.AddForce(direction);
     }
+
     public void FpMove()
     {
         if (Input.GetKey(KeyCode.A))
