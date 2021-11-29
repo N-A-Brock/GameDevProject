@@ -177,7 +177,7 @@ public class FPSController : MonoBehaviour
         }
         else if (cameraScript.activeCamera == cameraScript.tpCamera)
         {
-            movementDirection = input;
+            movementDirection = Vector3.Scale((cameraScript.tpCamera.transform.right * input.x), (cameraScript.tpCamera.transform.forward * input.z));
         }
     }
 
