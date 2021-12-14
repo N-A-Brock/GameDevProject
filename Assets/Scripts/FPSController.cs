@@ -41,13 +41,29 @@ public class FPSController : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Movement/Vision
+        //Movement
+        CharacterMove(movementDirection);
        
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Movement/Vision
+        if (cameraScript.activeCamera = cameraScript.fpCamera)
+        {
+            FpLook();
+            DirectionOutput(MovementInput(), cameraScript.fpCamera);
+        }
+        else if (cameraScript.activeCamera = cameraScript.tpCamera)
+        {
+            TpLook();
+            DirectionOutput(MovementInput(), cameraScript.tpCamera);
+        }
+        else
+        {
+
+        }
 
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
@@ -124,7 +140,6 @@ public class FPSController : MonoBehaviour
             }
         }
         
-
     }
     public void FpLook() // Look rotation (UP down is fpHead (X)) (Left right is player (Y))
     {
@@ -169,13 +184,13 @@ public class FPSController : MonoBehaviour
         return (new Vector3(x, 0, z));
     }
 
-    public void DirectionOutput(Vector3 input)
+    public void DirectionOutput(Vector3 input, GameObject actCam)
     {
-        if (cameraScript.activeCamera == cameraScript.fpCamera)
+        if (actCam == cameraScript.fpCamera)
         {
             movementDirection = input * movementSpeed;
         }
-        else if (cameraScript.activeCamera == cameraScript.tpCamera)
+        else if (actCam == cameraScript.tpCamera)
         {
             movementDirection = Vector3.Scale((cameraScript.tpCamera.transform.right * input.x), (cameraScript.tpCamera.transform.forward * input.z));
         }
