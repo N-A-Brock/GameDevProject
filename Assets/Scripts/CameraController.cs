@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private readonly Vector3 fpNormalPosition = new Vector3(0, 0, 0);
-    private readonly Vector3 fpCrouchPosition = new Vector3(0, -1, 0);
+    private readonly float fpNormalPositionY = 0;
+    private readonly float fpCrouchPositionY = 0.7f;
 
     public GameObject activeCamera; //Camera currently in use
     public GameObject tpCameraNormalPosition; //Where the tp camera should be if there was no clipping
@@ -74,11 +74,11 @@ public class CameraController : MonoBehaviour
     {
         if(!crouch)
         {
-            fpCamera.transform.localPosition = fpNormalPosition;//.transform.localPosition;
+            fpCamera.transform.localPosition = new Vector3(0, fpCrouchPositionY, 0);//.transform.localPosition;
         }
         else if(crouch)
         {
-            fpCamera.transform.localPosition = fpCrouchPosition;//.transform.localPosition;
+            fpCamera.transform.localPosition = new Vector3(0, fpNormalPositionY, 0);//.transform.localPosition;
         }
     }
 }

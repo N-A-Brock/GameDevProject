@@ -4,36 +4,32 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
-    private bool toggle;
+    private float movementSpeed = 20000f;
+    Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = this.gameObject.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKey(KeyCode.A))
         {
-            if (toggle)
-            {
-                toggle = false;
-            }
-            else
-            {
-                toggle = true;
-            }
+            rb.AddForce(Vector3.left * Time.deltaTime * movementSpeed);
         }
-
-        if (toggle)
+        if (Input.GetKey(KeyCode.D))
         {
-            Debug.Log("Right: " + this.transform.right + "    Product: " + Vector3.Scale(this.transform.forward, this.transform.right));
+            rb.AddForce(Vector3.right * Time.deltaTime * movementSpeed);
         }
-        else
+        if (Input.GetKey(KeyCode.W))
         {
-            Debug.Log("Forward: " + this.transform.forward);
-
+            rb.AddForce(Vector3.forward * Time.deltaTime * movementSpeed);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            rb.AddForce(Vector3.back * Time.deltaTime * movementSpeed);
         }
 
     }

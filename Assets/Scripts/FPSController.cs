@@ -13,10 +13,16 @@ public class FPSController : MonoBehaviour
 
     RaycastHit tpCameraClip;
 
-    readonly float jumpForce = 5000f;
-    readonly float crouchSpeed = 1f;
-    readonly float walkSpeed = 7.5f;
-    readonly float sprintSpeed = 12f;
+    readonly float colliderNormalHeight = 2f;
+    readonly float colliderCrouchHeight = 1f;
+    readonly float colliderNormalCenterY = 0f;
+    readonly float colliderCrouchCenterY = -0.5f;
+
+
+    readonly float jumpForce = 17000f;
+    readonly float crouchSpeed = 450f;
+    readonly float walkSpeed = 700f;
+    readonly float sprintSpeed = 1200f;
     readonly float lookSpeed = 2.0f;
     readonly float rotationSpeed = 100f;
     float movementSpeed;
@@ -27,7 +33,6 @@ public class FPSController : MonoBehaviour
 
     private float rY, rX; // X is left right, Y is up down.
 
-    private Vector3 movementDirection;
 
     Rigidbody rb;
     CapsuleCollider cc;
@@ -42,28 +47,15 @@ public class FPSController : MonoBehaviour
     void FixedUpdate()
     {
         //Movement
-        CharacterMove(movementDirection);
-       
+        MoveCharacter(MovementOutput(cameraScript.activeCamera, Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));     
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Movement/Vision
-        if (cameraScript.activeCamera = cameraScript.fpCamera)
-        {
-            FpLook();
-            DirectionOutput(MovementInput(), cameraScript.fpCamera);
-        }
-        else if (cameraScript.activeCamera = cameraScript.tpCamera)
-        {
-            TpLook();
-            DirectionOutput(MovementInput(), cameraScript.tpCamera);
-        }
-        else
-        {
 
-        }
+        //Vision
+        LookCharacter(cameraScript.activeCamera);
 
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
@@ -141,126 +133,84 @@ public class FPSController : MonoBehaviour
         }
         
     }
-    public void FpLook() // Look rotation (UP down is fpHead (X)) (Left right is player (Y))
+
+    
+    public void LookCharacter(GameObject actCam) // Look rotation (UP down is fpHead (X)) (Left right is player (Y))
     {
-        rY += -Input.GetAxis("Mouse Y");
-        rX += Input.GetAxis("Mouse X");
-        rY = Mathf.Clamp(rY, -40f, 40f);
-        transform.eulerAngles = new Vector2(0, rX) * lookSpeed;
-        fpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, 0, 0);
 
-        //Debug.Log("fplook");
+        if (actCam = cameraScript.fpCamera) //fpCam
+        {
+            Debug.Log("ara ara");
+            rY += -Input.GetAxis("Mouse Y");
+            rX += Input.GetAxis("Mouse X");
+            rY = Mathf.Clamp(rY, -40f, 40f);
+            transform.eulerAngles = new Vector2(0, rX) * lookSpeed;
+            fpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, 0, 0);
+        }
+        else if (actCam = cameraScript.tpCamera) //tpCam
+        {
+            Debug.Log("Hello im running uwu");
+            rY += -Input.GetAxis("Mouse Y");
+            rX += Input.GetAxis("Mouse X");
+            rY = Mathf.Clamp(rY, -40f, 40f);
+            tpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, rX * lookSpeed, 0);
 
+
+
+            //Anti camclip raycast
+            if (Physics.Linecast(fpHead.transform.position, cameraScript.tpCameraNormalPosition.transform.position))
+            {
+                cameraScript.tpCamera.transform.localPosition = Vector3.MoveTowards(cameraScript.tpCamera.transform.localPosition, fpHead.transform.localPosition, 2);
+                Debug.Log("ouch, my fpHead");
+            }
+            else if (cameraScript.tpCamera.transform.localPosition != cameraScript.tpCameraNormalPosition.transform.localPosition)
+            {
+                cameraScript.tpCamera.transform.localPosition = Vector3.MoveTowards(cameraScript.tpCamera.transform.localPosition, cameraScript.tpCameraNormalPosition.transform.localPosition, 2);
+            }
+        }
     }
 
-    public void TpLook()
-    {
-        rY += -Input.GetAxis("Mouse Y");
-        rX += Input.GetAxis("Mouse X");
-        rY = Mathf.Clamp(rY, -40f, 40f);
-        tpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, rX * lookSpeed, 0);
 
+
+    public Vector3 MovementOutput(GameObject actCam, float inX, float inY) //inX is horizontal input, inY is vertical. No correllation to 3D coordinates.
+    {
+        if (actCam = cameraScript.fpCamera)
+        {
+            return (Vector3.Normalize((this.transform.forward * inY) + (this.transform.right * inX)) * movementSpeed);
+        }
+        else if (actCam = cameraScript.tpCamera)
+        {
+            return Vector3.zero;
+
+        }
+        else
+        {
+            return Vector3.zero;
+        }
         
-
-
-        if (Physics.Linecast(fpHead.transform.position, cameraScript.tpCameraNormalPosition.transform.position))
-        {
-            cameraScript.tpCamera.transform.localPosition = Vector3.MoveTowards(cameraScript.tpCamera.transform.localPosition, fpHead.transform.localPosition, 2);
-            Debug.Log("ouch, my fpHead");
-        }
-        else if (cameraScript.tpCamera.transform.localPosition != cameraScript.tpCameraNormalPosition.transform.localPosition)
-        {
-            cameraScript.tpCamera.transform.localPosition = Vector3.MoveTowards(cameraScript.tpCamera.transform.localPosition, cameraScript.tpCameraNormalPosition.transform.localPosition, 2);
-        }
-
     }
 
-    public Vector3 MovementInput()
-    {
-        float x, z;
-        x = Input.GetAxis("Horizontal");
-        z = Input.GetAxis("Vertical");
-
-        return (new Vector3(x, 0, z));
-    }
-
-    public void DirectionOutput(Vector3 input, GameObject actCam)
-    {
-        if (actCam == cameraScript.fpCamera)
-        {
-            movementDirection = input * movementSpeed;
-        }
-        else if (actCam == cameraScript.tpCamera)
-        {
-            movementDirection = Vector3.Scale((cameraScript.tpCamera.transform.right * input.x), (cameraScript.tpCamera.transform.forward * input.z));
-        }
-    }
-
-    public void CharacterMove(Vector3 direction)
+    public void MoveCharacter(Vector3 direction)
     {
         rb.AddForce(direction);
     }
 
-    public void FpMove()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            rb.AddForce(Vector3.left * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            rb.AddForce(Vector3.right * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            rb.AddForce(Vector3.forward * movementSpeed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            rb.AddForce(Vector3.back * movementSpeed);
-        }
-    }
 
-    public void TpMove()
-    {
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            this.transform.Translate(Vector3.Normalize(-cameraScript.tpCamera.transform.right) * Time.deltaTime * movementSpeed, Space.World);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            this.transform.Translate(Vector3.Normalize(cameraScript.tpCamera.transform.right) * Time.deltaTime * movementSpeed, Space.World);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            this.transform.Translate(Vector3.Normalize(new Vector3(cameraScript.tpCamera.transform.forward.x, 0, cameraScript.tpCamera.transform.forward.z)) * Time.deltaTime * movementSpeed, Space.World);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            this.transform.Translate(Vector3.Normalize(new Vector3(-cameraScript.tpCamera.transform.forward.x, 0, -cameraScript.tpCamera.transform.forward.z)) * Time.deltaTime * movementSpeed, Space.World);     
-        }
-        Debug.Log(rb.velocity);
-    }
-
-    public void TpRotate(Vector3 direction)
-    {
-        //fpHead.transform.rotation = Quaternion.FromToRotation(fpHead.transform.rotation, );
-    }
 
     //replace with reference to camera script
     public void Crouch()
     {
         speedBeforeCrouching = movementSpeed;
+        cc.height = colliderCrouchHeight;
+        cc.center = new Vector3(0, colliderCrouchCenterY, 0);
         cameraScript.ToggleCameraCrouch(true);
-        cc.enabled = false;
-        
     }
     public void Decrouch()
     {
         
         movementSpeed = walkSpeed;
-        cc.enabled = true;
+        cc.height = colliderNormalHeight;
+        cc.center = new Vector3(0, colliderNormalCenterY, 0);
         cameraScript.ToggleCameraCrouch(false);
     }
 }
