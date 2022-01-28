@@ -9,9 +9,6 @@ public class FPSController : MonoBehaviour
     bool crouchToggled;
     public bool isCrouching;
 
-    public GameObject test;
-
-    RaycastHit tpCameraClip;
 
     readonly float colliderNormalHeight = 2f;
     readonly float colliderCrouchHeight = 1f;
@@ -28,15 +25,12 @@ public class FPSController : MonoBehaviour
     float movementSpeed;
     float speedBeforeCrouching;
 
-    readonly float minCameraDistance = -1f;
-    readonly float camMoveSpeed = 0.05f;
-    readonly float camDetectRange = 0.5f;
-    readonly float camExtraMoveDistance = 0.2f; //To avoid tpCam moving just far enough to be out of the collider of another object, move it a little farther (a little represented by this amount)
+    
     public GameObject fpHead;
     public GameObject tpHead;
-    public GameObject tpHeadCollider;
+    public GameObject characterModel;
 
-    private float rY, rX; // X is left right, Y is up down.
+    private float rY, rX; // X is left right, Y is up down
 
 
     Rigidbody rb;
@@ -139,7 +133,7 @@ public class FPSController : MonoBehaviour
     }
 
     
-    public void LookCharacter(GameObject actCam) // Look rotation (UP down is fpHead (X)) (Left right is player (Y))
+    public void LookCharacter(GameObject actCam)
     {
 
         if (actCam == cameraScript.fpCamera) //fpCam
@@ -148,7 +142,7 @@ public class FPSController : MonoBehaviour
             rX += Input.GetAxis("Mouse X");
             rY = Mathf.Clamp(rY, -40f, 40f);
             transform.eulerAngles = new Vector2(0, rX) * lookSpeed;
-            fpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, 0, 0);
+            cameraScript.fpCamera.transform.localRotation = Quaternion.Euler(rY * lookSpeed, 0, 0);
         }
         else if (actCam == cameraScript.tpCamera) //tpCam
         {
@@ -156,43 +150,10 @@ public class FPSController : MonoBehaviour
             rX += Input.GetAxis("Mouse X");
             rY = Mathf.Clamp(rY, -40f, 40f);
             tpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, rX * lookSpeed, 0);
-
-            if(Physics.Linecast(fpHead.transform.position, cameraScript.tpCameraNormalPosition.transform.position))
-            {
-                Debug.Log("Owww GODAMNIT my gosh darn HEEEEAD");
-                if (Physics.Linecast(fpHead.transform.position, cameraScript.tpCamera.transform.position))
-                {
-                    Debug.Log("1");
-                    cameraScript.tpCamera.transform.localPosition = new Vector3(0, 0, (Mathf.Lerp(cameraScript.tpCamera.transform.localPosition.z, minCameraDistance, camMoveSpeed) + camExtraMoveDistance));
-                }
-                else if (Physics.Linecast(cameraScript.tpCamera.transform.position, tpHeadCollider.transform.position) && !(Physics.Linecast(fpHead.transform.position, cameraScript.tpCamera.transform.position)))
-                {
-                    Debug.Log("2");
-
-                }
-                else
-                {
-                    Debug.Log("3");
-
-                    cameraScript.tpCamera.transform.localPosition = new Vector3(0, 0, (Mathf.Lerp(cameraScript.tpCamera.transform.localPosition.z, cameraScript.tpCameraNormalPosition.transform.position.z, camMoveSpeed)));
-                }
-            }
-
-
-            /*Anti camclip raycast
-            if ((Physics.Linecast(fpHead.transform.position, cameraScript.tpCameraNormalPosition.transform.position)) && (Physics.Linecast(fpHead.transform.position, cameraScript.tpCamera.transform.position)))
-            {
-                Debug.Log("Owww GODAMNIT my gosh darn HEEEEAD");
-                cameraScript.tpCamera.transform.localPosition = new Vector3(0, 0, (Mathf.Lerp(cameraScript.tpCamera.transform.localPosition.z, minCameraDistance, camMoveSpeed) + camExtraMoveDistance));
-            }
-            else
-            {
-                cameraScript.tpCamera.transform.localPosition = cameraScript.tpCameraNormalPosition.transform.localPosition;
-            }*/
         }
+
+        cameraScript.CameraAction();
     }
-
-
 
     public Vector3 MovementOutput(GameObject actCam, float inX, float inY) //inX is horizontal input, inY is vertical. No correllation to 3D coordinates.
     {
@@ -202,7 +163,8 @@ public class FPSController : MonoBehaviour
         }
         else if (actCam == cameraScript.tpCamera)
         {
-            return (Vector3.Normalize((actCam.transform.forward * inY) + (actCam.transform.right * inX)) * movementSpeed);
+            /*return (Vector3.Normalize((actCam.transform.forward * inY) + (actCam.transform.right * inX)) * movementSpeed);*/  //Non Corrected Version of following line (does not cancel vertical component of movement vector)
+            return (Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inY) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inX)) * movementSpeed);
         }
         else
         {
