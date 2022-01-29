@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FPSController : MonoBehaviour
 {
@@ -10,25 +11,23 @@ public class FPSController : MonoBehaviour
     public bool isCrouching;
 
 
-    readonly float colliderNormalHeight = 2f;
-    readonly float colliderCrouchHeight = 1f;
-    readonly float colliderNormalCenterY = 0f;
-    readonly float colliderCrouchCenterY = -0.5f;
+    public InputAction moveAction;
 
 
-    readonly float jumpForce = 17000f;
-    readonly float crouchSpeed = 450f;
-    readonly float walkSpeed = 700f;
-    readonly float sprintSpeed = 1200f;
-    readonly float lookSpeed = 2.0f;
-    readonly float rotationSpeed = 100f;
+    readonly float COLLIDER_NORMAL_HEIGHT = 2f;
+    readonly float COLLIDER_CROUCH_HEIGHT = 1f;
+    readonly float COLLIDER_NORMAL_CENTER_Y = 0f;
+    readonly float COLLIDER_CROUCH_CENTER_Y = -0.5f;
+
+
+    readonly float JUMP_FORCE = 6f;
+    readonly float CROUCH_SPEED = 450f;
+    readonly float WALK_SPEED = 700f;
+    readonly float SPRINT_SPEED = 1200f;
+    readonly float LOOK_SPEED = 2.0f;
+    readonly float ROTATION_SPEED = 0.6f;
     float movementSpeed;
     float speedBeforeCrouching;
-
-    
-    public GameObject fpHead;
-    public GameObject tpHead;
-    public GameObject characterModel;
 
     private float rY, rX; // X is left right, Y is up down
 
@@ -38,6 +37,7 @@ public class FPSController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        EnableActions();
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
@@ -52,26 +52,26 @@ public class FPSController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log(moveAction.ReadValue<Vector2>());
         //Vision
         LookCharacter(cameraScript.activeCamera);
 
         //Sprint
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
         {
-            movementSpeed = sprintSpeed;
+            movementSpeed = SPRINT_SPEED;
             
         }
         else if (!isCrouching)
         {
-            movementSpeed = walkSpeed;
+            movementSpeed = WALK_SPEED;
             
         }
 
         //Jump
         if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position, Vector3.down, 1.5f))
         {
-            rb.AddForce(Vector3.up * jumpForce);
+            rb.velocity += (Vector3.up * JUMP_FORCE);
 
         }
 
@@ -104,10 +104,6 @@ public class FPSController : MonoBehaviour
         //Camera
         if (Input.GetKeyDown(KeyCode.V))
         {
-            if(cameraScript.ActiveCamera(false))
-            {
-                fpHead.transform.localRotation = Quaternion.Euler(0, fpHead.transform.localRotation.y, 0);
-            }
             cameraScript.EnableCamera(cameraScript.ActiveCamera(true));
         }
 
@@ -116,17 +112,17 @@ public class FPSController : MonoBehaviour
         {
             if (movementSpeed > 1 && movementSpeed < 1.6)
             {
-                movementSpeed = crouchSpeed;
+                movementSpeed = CROUCH_SPEED;
                 speedBeforeCrouching = 0;
             }
-            else if (speedBeforeCrouching == sprintSpeed)
+            else if (speedBeforeCrouching == SPRINT_SPEED)
             {
-                //rb.velocity = Vector3.MoveTowards(rb.velocity, rb.velocity.normalized * crouchSpeed, 50f * Time.deltaTime);
-                movementSpeed = Mathf.Lerp(movementSpeed, crouchSpeed, 2f * Time.deltaTime);
+                //rb.velocity = Vector3.MoveTowards(rb.velocity, rb.velocity.normalized * CROUCH_SPEED, 50f * Time.deltaTime);
+                movementSpeed = Mathf.Lerp(movementSpeed, CROUCH_SPEED, 2f * Time.deltaTime);
             }
             else
             {
-                movementSpeed = crouchSpeed;
+                movementSpeed = CROUCH_SPEED;
             }
         }
         
@@ -136,21 +132,16 @@ public class FPSController : MonoBehaviour
     public void LookCharacter(GameObject actCam)
     {
 
-        if (actCam == cameraScript.fpCamera) //fpCam
+        rY += -Input.GetAxis("Mouse Y");
+        rX += Input.GetAxis("Mouse X");
+        rY = Mathf.Clamp(rY, -40f, 40f);
+        if (actCam == cameraScript.fpCamera)
         {
-            rY += -Input.GetAxis("Mouse Y");
-            rX += Input.GetAxis("Mouse X");
-            rY = Mathf.Clamp(rY, -40f, 40f);
-            transform.eulerAngles = new Vector2(0, rX) * lookSpeed;
-            cameraScript.fpCamera.transform.localRotation = Quaternion.Euler(rY * lookSpeed, 0, 0);
+            transform.eulerAngles = new Vector2(0, rX) * LOOK_SPEED;
         }
-        else if (actCam == cameraScript.tpCamera) //tpCam
-        {
-            rY += -Input.GetAxis("Mouse Y");
-            rX += Input.GetAxis("Mouse X");
-            rY = Mathf.Clamp(rY, -40f, 40f);
-            tpHead.transform.localRotation = Quaternion.Euler(rY * lookSpeed, rX * lookSpeed, 0);
-        }
+        cameraScript.cameraAssembly.transform.eulerAngles = new Vector2(0, rX) * LOOK_SPEED;
+        cameraScript.fpCamera.transform.localRotation = Quaternion.Euler(rY * LOOK_SPEED, 0, 0);
+        cameraScript.tpAssembly.transform.localRotation = Quaternion.Euler(rY * LOOK_SPEED, 0, 0);
 
         cameraScript.CameraAction();
     }
@@ -163,7 +154,10 @@ public class FPSController : MonoBehaviour
         }
         else if (actCam == cameraScript.tpCamera)
         {
-            /*return (Vector3.Normalize((actCam.transform.forward * inY) + (actCam.transform.right * inX)) * movementSpeed);*/  //Non Corrected Version of following line (does not cancel vertical component of movement vector)
+            if (inX != 0 || inY != 0)
+            {
+                this.transform.localRotation = Quaternion.Slerp(this.transform.localRotation, Quaternion.LookRotation(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inY) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inX))), ROTATION_SPEED);
+            }
             return (Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inY) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inX)) * movementSpeed);
         }
         else
@@ -184,16 +178,21 @@ public class FPSController : MonoBehaviour
     public void Crouch()
     {
         speedBeforeCrouching = movementSpeed;
-        cc.height = colliderCrouchHeight;
-        cc.center = new Vector3(0, colliderCrouchCenterY, 0);
+        cc.height = COLLIDER_CROUCH_HEIGHT;
+        cc.center = new Vector3(0, COLLIDER_CROUCH_CENTER_Y, 0);
         cameraScript.ToggleCameraCrouch(true);
     }
     public void Decrouch()
     {
         
-        movementSpeed = walkSpeed;
-        cc.height = colliderNormalHeight;
-        cc.center = new Vector3(0, colliderNormalCenterY, 0);
+        movementSpeed = WALK_SPEED;
+        cc.height = COLLIDER_NORMAL_HEIGHT;
+        cc.center = new Vector3(0, COLLIDER_NORMAL_CENTER_Y, 0);
         cameraScript.ToggleCameraCrouch(false);
+    }
+
+    public void EnableActions()
+    {
+        moveAction.Enable();
     }
 }

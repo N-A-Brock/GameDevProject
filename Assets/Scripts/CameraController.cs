@@ -8,15 +8,16 @@ public class CameraController : MonoBehaviour
     private readonly float fpCrouchPositionY = 0.2f;
 
     RaycastHit tpCameraClipHit;
-    readonly float minCameraDistance = -1f;
-    readonly float camMoveSpeed = 0.01f;
-    readonly float camClipBuffer = 0.2f; //To avoid tpCam moving just far enough to be out of the collider of another object, move it a little farther (a little represented by this amount)
-    readonly float camJitterBuffer = 0.3f; //When the camera is raycasting out of an object, it will normally over adjust and jitter forwards and backwards. This value represents a bit of wiggle room
+    readonly float MIN_CAMERA_DISTANCE = -1f;
+    readonly float CAM_MOVE_SPEED = 0.01f;
+    readonly float CAM_CLIP_BUFFER = 0.2f; //To avoid tpCam moving just far enough to be out of the collider of another object, move it a little farther (a little represented by this amount)
+    readonly float CAM_JITTER_BUFFER = 0.3f; //When the camera is raycasting out of an object, it will normally over adjust and jitter forwards and backwards. This value represents a bit of wiggle room
 
     public GameObject activeCamera; //Camera currently in use
     public GameObject tpCameraNormalPosition; //Where the tp camera should be if there was no clipping
     public GameObject fpCamera; //First Person Camera
     public GameObject tpCamera; //Third Person Camera
+    public GameObject tpAssembly;
     public GameObject cameraAssembly; //All components of Third Person Camera
     public GameObject[] cameras;
 
@@ -25,12 +26,13 @@ public class CameraController : MonoBehaviour
     {
         cameras = new GameObject[] { fpCamera, tpCamera };
         EnableCamera(fpCamera);
+        activeCamera = fpCamera;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     //enables specified camera, disables all others
@@ -46,6 +48,7 @@ public class CameraController : MonoBehaviour
         }
         cameraToEnable.SetActive(true);
     }
+
 
     //returns which camera (fp or tp) should be enabled
     public GameObject ActiveCamera(bool invertReturn)
@@ -76,7 +79,7 @@ public class CameraController : MonoBehaviour
 
     public void ToggleCameraCrouch(bool crouch) //true if crouching, false if standing up
     {
-        if(!crouch)
+        if (!crouch)
         {
             cameraAssembly.transform.localPosition = new Vector3(0, fpNormalPositionY, 0);
         }
@@ -98,13 +101,13 @@ public class CameraController : MonoBehaviour
             {
                 if ((Physics.Linecast(fpCamera.transform.position, tpCamera.transform.position)) || ((Physics.Linecast(fpCamera.transform.position, tpCamera.transform.position)) && (Physics.Linecast(tpCamera.transform.position, tpCameraNormalPosition.transform.position))))
                 {
-                    tpCamera.transform.localPosition = new Vector3(0, 0, (Mathf.Lerp(tpCamera.transform.localPosition.z, minCameraDistance, camMoveSpeed) + camClipBuffer));
+                    tpCamera.transform.localPosition = new Vector3(0, 0, (Mathf.Lerp(tpCamera.transform.localPosition.z, MIN_CAMERA_DISTANCE, CAM_MOVE_SPEED) + CAM_CLIP_BUFFER));
                 }
                 else if ((Physics.Linecast(tpCamera.transform.position, tpCameraNormalPosition.transform.position, out tpCameraClipHit)) && !(Physics.Linecast(fpCamera.transform.position, tpCamera.transform.position)))
                 {
-                    if (Vector3.Distance(tpCamera.transform.position, tpCameraClipHit.transform.position) <= camJitterBuffer)
+                    if (Vector3.Distance(tpCamera.transform.position, tpCameraClipHit.transform.position) <= CAM_JITTER_BUFFER)
                     {
-                        tpCamera.transform.position = Vector3.MoveTowards(tpCamera.transform.position, tpCameraClipHit.point, camMoveSpeed);
+                        tpCamera.transform.position = Vector3.MoveTowards(tpCamera.transform.position, tpCameraClipHit.point, CAM_MOVE_SPEED);
                     }
 
                 }
@@ -113,7 +116,7 @@ public class CameraController : MonoBehaviour
             {
                 if (tpCamera.transform.localPosition != tpCameraNormalPosition.transform.localPosition)
                 {
-                    tpCamera.transform.localPosition = Vector3.MoveTowards(tpCamera.transform.localPosition, tpCameraNormalPosition.transform.localPosition, camMoveSpeed);
+                    tpCamera.transform.localPosition = Vector3.MoveTowards(tpCamera.transform.localPosition, tpCameraNormalPosition.transform.localPosition, CAM_MOVE_SPEED);
                 }
                 else
                 {
