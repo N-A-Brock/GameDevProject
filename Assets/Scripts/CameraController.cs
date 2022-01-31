@@ -109,7 +109,6 @@ public class CameraController : MonoBehaviour
                     {
                         tpCamera.transform.position = Vector3.MoveTowards(tpCamera.transform.position, tpCameraClipHit.point, CAM_MOVE_SPEED);
                     }
-
                 }
             }
             else
@@ -128,6 +127,5 @@ public class CameraController : MonoBehaviour
         {
 
         }
-    }
-    
+    }   
 }

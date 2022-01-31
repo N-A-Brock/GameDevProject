@@ -655,7 +655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: b54a9d9fc33ed74469bc893e8130dca2,
     type: 3}
-  m_NotificationBehavior: 2
+  m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -710,6 +710,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraScript: {fileID: 761675130}
   isCrouching: 0
+  moveAction:
+    m_Name: Move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4aa092bc-1f62-4ef7-8ebe-9bca65932ae4
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
 --- !u!136 &761675129
 CapsuleCollider:
   m_ObjectHideFlags: 0

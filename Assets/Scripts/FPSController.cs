@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,8 +11,9 @@ public class FPSController : MonoBehaviour
     bool crouchToggled;
     public bool isCrouching;
 
-
-    public InputAction moveAction;
+    private PlayerActions playerActions;
+    private InputAction moveAction;
+    private InputAction lookAction;
 
 
     readonly float COLLIDER_NORMAL_HEIGHT = 2f;
@@ -24,8 +26,8 @@ public class FPSController : MonoBehaviour
     readonly float CROUCH_SPEED = 450f;
     readonly float WALK_SPEED = 700f;
     readonly float SPRINT_SPEED = 1200f;
-    readonly float LOOK_SPEED = 2.0f;
-    readonly float ROTATION_SPEED = 0.6f;
+    readonly float LOOK_SPEED = 0.3f;
+    readonly float ROTATION_SPEED = 0.2f;
     float movementSpeed;
     float speedBeforeCrouching;
 
@@ -34,10 +36,43 @@ public class FPSController : MonoBehaviour
 
     Rigidbody rb;
     CapsuleCollider cc;
+
+    private void Awake()
+    {
+        playerActions = new PlayerActions();
+    }
+
+    private void OnEnable()
+    {
+        moveAction = playerActions.PlayerControls.Movement;
+        moveAction.Enable();
+
+        lookAction = playerActions.PlayerControls.Look;
+        lookAction.Enable();
+
+        playerActions.PlayerControls.Jump.performed += JumpCharacter;
+        playerActions.PlayerControls.Jump.Enable();
+
+        playerActions.PlayerControls.Run.Enable();
+
+        playerActions.PlayerControls.Crouch.performed += CrouchCharacter;
+        playerActions.PlayerControls.Crouch.Enable();
+
+        playerActions.PlayerControls.ChangeCamera.performed += ChangeCamera;
+        playerActions.PlayerControls.ChangeCamera.Enable();
+    }
+
+
+    private void OnDisable()
+    {
+        moveAction.Disable();
+        lookAction.Disable();
+        playerActions.PlayerControls.Jump.Disable();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        EnableActions();
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
@@ -45,19 +80,19 @@ public class FPSController : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         //Movement
-        MoveCharacter(MovementOutput(cameraScript.activeCamera, Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));     
+        MoveCharacter(cameraScript.activeCamera, moveAction.ReadValue<Vector2>());     
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(moveAction.ReadValue<Vector2>());
         //Vision
-        LookCharacter(cameraScript.activeCamera);
+        LookCharacter(cameraScript.activeCamera, lookAction.ReadValue<Vector2>());
 
         //Sprint
-        if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
+        if ((playerActions.PlayerControls.Run.ReadValue<float>() == 1) && !isCrouching)
         {
             movementSpeed = SPRINT_SPEED;
             
@@ -68,56 +103,16 @@ public class FPSController : MonoBehaviour
             
         }
 
-        //Jump
-        if (Input.GetKeyDown(KeyCode.Space) && Physics.Raycast(transform.position, Vector3.down, 1.5f))
-        {
-            rb.velocity += (Vector3.up * JUMP_FORCE);
-
-        }
-
-        //Crouch
-        if (Input.GetKeyDown(KeyCode.C) && !crouchToggled)
-        {
-            Crouch();
-            crouchToggled = true;
-            isCrouching = true;
-
-        }
-        else if (Input.GetKeyDown(KeyCode.C) && crouchToggled)
-        {
-            Decrouch();
-            crouchToggled = false;
-            isCrouching = false;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            Crouch();
-            isCrouching = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            Decrouch();
-            crouchToggled = false;
-            isCrouching = false;
-        }
-
-        //Camera
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            cameraScript.EnableCamera(cameraScript.ActiveCamera(true));
-        }
-
         //Sliding
         if (isCrouching)
         {
-            if (movementSpeed > 1 && movementSpeed < 1.6)
+            if (movementSpeed > 1 && movementSpeed < 1.6) //Ngl idk what this does
             {
                 movementSpeed = CROUCH_SPEED;
                 speedBeforeCrouching = 0;
             }
             else if (speedBeforeCrouching == SPRINT_SPEED)
             {
-                //rb.velocity = Vector3.MoveTowards(rb.velocity, rb.velocity.normalized * CROUCH_SPEED, 50f * Time.deltaTime);
                 movementSpeed = Mathf.Lerp(movementSpeed, CROUCH_SPEED, 2f * Time.deltaTime);
             }
             else
@@ -128,71 +123,73 @@ public class FPSController : MonoBehaviour
         
     }
 
-    
-    public void LookCharacter(GameObject actCam)
+    private void ChangeCamera(InputAction.CallbackContext obj)
     {
-
-        rY += -Input.GetAxis("Mouse Y");
-        rX += Input.GetAxis("Mouse X");
-        rY = Mathf.Clamp(rY, -40f, 40f);
-        if (actCam == cameraScript.fpCamera)
-        {
-            transform.eulerAngles = new Vector2(0, rX) * LOOK_SPEED;
-        }
-        cameraScript.cameraAssembly.transform.eulerAngles = new Vector2(0, rX) * LOOK_SPEED;
-        cameraScript.fpCamera.transform.localRotation = Quaternion.Euler(rY * LOOK_SPEED, 0, 0);
-        cameraScript.tpAssembly.transform.localRotation = Quaternion.Euler(rY * LOOK_SPEED, 0, 0);
-
-        cameraScript.CameraAction();
+        cameraScript.EnableCamera(cameraScript.ActiveCamera(true));
     }
 
-    public Vector3 MovementOutput(GameObject actCam, float inX, float inY) //inX is horizontal input, inY is vertical. No correllation to 3D coordinates.
+    public void LookCharacter(GameObject actCam, Vector2 inVal)
     {
+        rY += -inVal.y;
+        rX += inVal.x;
+        rY = Mathf.Clamp(rY, -89f, 89f);
+        Debug.Log(rY);
         if (actCam == cameraScript.fpCamera)
         {
-            return (Vector3.Normalize((this.transform.forward * inY) + (this.transform.right * inX)) * movementSpeed);
+            this.transform.localRotation = Quaternion.Slerp(this.transform.localRotation, Quaternion.Euler(0, rX, 0), LOOK_SPEED);
+            cameraScript.fpCamera.transform.localRotation = Quaternion.Slerp(cameraScript.fpCamera.transform.localRotation, Quaternion.Euler(rY, 0, 0), LOOK_SPEED);
         }
         else if (actCam == cameraScript.tpCamera)
         {
-            if (inX != 0 || inY != 0)
-            {
-                this.transform.localRotation = Quaternion.Slerp(this.transform.localRotation, Quaternion.LookRotation(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inY) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inX))), ROTATION_SPEED);
-            }
-            return (Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inY) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inX)) * movementSpeed);
+            //cameraScript.cameraAssembly.transform.localRotation = Quaternion.Slerp(cameraScript.cameraAssembly.transform.localRotation, Quaternion.Euler(0, rX, 0), LOOK_SPEED);
+            cameraScript.tpAssembly.transform.localRotation = Quaternion.Slerp(cameraScript.tpAssembly.transform.localRotation, Quaternion.Euler(rY, rX, 0), LOOK_SPEED);
         }
-        else
+        cameraScript.CameraAction();
+    }
+
+    public void MoveCharacter(GameObject actCam, Vector2 inVal) //inVal.x is horizontal input, inY is vertical. No correllation to 3D coordinates.
+    {
+        if (actCam == cameraScript.fpCamera)
         {
-            return Vector3.zero;
+            rb.AddForce(Vector3.Normalize((this.transform.forward * inVal.y) + (this.transform.right * inVal.x)) * movementSpeed);
         }
-        
+        else if (actCam == cameraScript.tpCamera)
+        {
+            if (inVal.x != 0 || inVal.y != 0)
+            {
+                this.transform.localRotation = Quaternion.Slerp(this.transform.localRotation, Quaternion.LookRotation(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inVal.y) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inVal.x))), ROTATION_SPEED);
+            }
+            rb.AddForce(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inVal.y) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inVal.x)) * movementSpeed);
+        }
     }
 
-    public void MoveCharacter(Vector3 direction)
+
+    private void JumpCharacter(InputAction.CallbackContext obj)
     {
-        rb.AddForce(direction);
+        if (Physics.Raycast(transform.position, Vector3.down, 1.5f))
+        {
+            rb.velocity += (Vector3.up * JUMP_FORCE);
+        }
     }
 
 
-
-    //replace with reference to camera script
-    public void Crouch()
+    private void CrouchCharacter(InputAction.CallbackContext obj)
     {
-        speedBeforeCrouching = movementSpeed;
-        cc.height = COLLIDER_CROUCH_HEIGHT;
-        cc.center = new Vector3(0, COLLIDER_CROUCH_CENTER_Y, 0);
-        cameraScript.ToggleCameraCrouch(true);
-    }
-    public void Decrouch()
-    {
-        
-        movementSpeed = WALK_SPEED;
-        cc.height = COLLIDER_NORMAL_HEIGHT;
-        cc.center = new Vector3(0, COLLIDER_NORMAL_CENTER_Y, 0);
-        cameraScript.ToggleCameraCrouch(false);
-    }
-
-    public void EnableActions()
-    {
-        moveAction.Enable();
+        if (!isCrouching)
+        {
+            isCrouching = true;
+            speedBeforeCrouching = movementSpeed;
+            cc.height = COLLIDER_CROUCH_HEIGHT;
+            cc.center = new Vector3(0, COLLIDER_CROUCH_CENTER_Y, 0);
+            cameraScript.ToggleCameraCrouch(true);
+        }
+        else if (isCrouching)
+        {
+            isCrouching = false;
+            movementSpeed = WALK_SPEED;
+            cc.height = COLLIDER_NORMAL_HEIGHT;
+            cc.center = new Vector3(0, COLLIDER_NORMAL_CENTER_Y, 0);
+            cameraScript.ToggleCameraCrouch(false);
+        }
     }
 }
