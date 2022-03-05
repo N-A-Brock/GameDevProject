@@ -14,6 +14,7 @@ public class FPSController : MonoBehaviour
     private PlayerActions playerActions;
     private InputAction moveAction;
     private InputAction lookAction;
+    public GameObject characterModel; //Once a script exists specifically for controlling the model, replace this variable with reference to that script
 
 
     readonly float COLLIDER_NORMAL_HEIGHT = 2f;
@@ -26,7 +27,7 @@ public class FPSController : MonoBehaviour
     readonly float CROUCH_SPEED = 450f;
     readonly float WALK_SPEED = 700f;
     readonly float SPRINT_SPEED = 1200f;
-    readonly float LOOK_SPEED = 0.3f;
+    readonly float LOOK_SPEED = 0.1f;
     readonly float ROTATION_SPEED = 0.2f;
     float movementSpeed;
     float speedBeforeCrouching;
@@ -157,7 +158,8 @@ public class FPSController : MonoBehaviour
         {
             if (inVal.x != 0 || inVal.y != 0)
             {
-                this.transform.localRotation = Quaternion.Slerp(this.transform.localRotation, Quaternion.LookRotation(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inVal.y) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inVal.x))), ROTATION_SPEED);
+                //This fucker right here
+                characterModel.transform.rotation = Quaternion.Slerp(characterModel.transform.rotation, Quaternion.LookRotation(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inVal.y) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inVal.x))), ROTATION_SPEED);
             }
             rb.AddForce(Vector3.Normalize((new Vector3(actCam.transform.forward.x, 0, actCam.transform.forward.z) * inVal.y) + (new Vector3(actCam.transform.right.x, 0, actCam.transform.right.z) * inVal.x)) * movementSpeed);
         }
