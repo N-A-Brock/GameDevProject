@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private readonly float fpNormalPositionY = 0.9f;
-    private readonly float fpCrouchPositionY = 0.2f;
+    private const float fpNormalPositionY = 0.9f;
+    private const float fpCrouchPositionY = 0.2f;
 
     RaycastHit tpCameraClipHit;
-    readonly float MIN_CAMERA_DISTANCE = -1f;
-    readonly float CAM_MOVE_SPEED = 0.01f;
-    readonly float CAM_CLIP_BUFFER = 0.2f; //To avoid tpCam moving just far enough to be out of the collider of another object, move it a little farther (a little represented by this amount)
-    readonly float CAM_JITTER_BUFFER = 0.3f; //When the camera is raycasting out of an object, it will normally over adjust and jitter forwards and backwards. This value represents a bit of wiggle room
+    const float MIN_CAMERA_DISTANCE = -1f;
+    const float CAM_MOVE_SPEED = 0.01f;
+    const float CAM_CLIP_BUFFER = 0.2f; //To avoid tpCam moving just far enough to be out of the collider of another object, move it a little farther (a little represented by this amount)
+    const float CAM_JITTER_BUFFER = 0.3f; //When the camera is raycasting out of an object, it will normally over adjust and jitter forwards and backwards. This value represents a bit of wiggle room
 
     public GameObject activeCamera; //Camera currently in use
     public GameObject tpCameraNormalPosition; //Where the tp camera should be if there was no clipping

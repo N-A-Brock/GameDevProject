@@ -17,18 +17,18 @@ public class FPSController : MonoBehaviour
     public GameObject characterModel; //Once a script exists specifically for controlling the model, replace this variable with reference to that script
 
 
-    readonly float COLLIDER_NORMAL_HEIGHT = 2f;
-    readonly float COLLIDER_CROUCH_HEIGHT = 1f;
-    readonly float COLLIDER_NORMAL_CENTER_Y = 0f;
-    readonly float COLLIDER_CROUCH_CENTER_Y = -0.5f;
+    const float COLLIDER_NORMAL_HEIGHT = 2f;
+    const float COLLIDER_CROUCH_HEIGHT = 1f;
+    const float COLLIDER_NORMAL_CENTER_Y = 0f;
+    const float COLLIDER_CROUCH_CENTER_Y = -0.5f;
 
 
-    readonly float JUMP_FORCE = 6f;
-    readonly float CROUCH_SPEED = 450f;
-    readonly float WALK_SPEED = 700f;
-    readonly float SPRINT_SPEED = 1200f;
-    readonly float LOOK_SPEED = 0.1f;
-    readonly float ROTATION_SPEED = 0.2f;
+    const float JUMP_FORCE = 6f;
+    const float CROUCH_SPEED = 450f;
+    const float WALK_SPEED = 700f;
+    const float SPRINT_SPEED = 1200f;
+    const float LOOK_SPEED = 0.1f;
+    const float ROTATION_SPEED = 0.2f;
     float movementSpeed;
     float speedBeforeCrouching;
 
@@ -79,6 +79,7 @@ public class FPSController : MonoBehaviour
         cc = GetComponent<CapsuleCollider>();
     }
 
+
     void FixedUpdate()
     {
         
@@ -121,13 +122,14 @@ public class FPSController : MonoBehaviour
                 movementSpeed = CROUCH_SPEED;
             }
         }
-        
     }
+
 
     private void ChangeCamera(InputAction.CallbackContext obj)
     {
         cameraScript.EnableCamera(cameraScript.ActiveCamera(true));
     }
+
 
     public void LookCharacter(GameObject actCam, Vector2 inVal)
     {
@@ -147,6 +149,7 @@ public class FPSController : MonoBehaviour
         }
         cameraScript.CameraAction();
     }
+
 
     public void MoveCharacter(GameObject actCam, Vector2 inVal) //inVal.x is horizontal input, inY is vertical. No correllation to 3D coordinates.
     {
