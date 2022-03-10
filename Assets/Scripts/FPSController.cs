@@ -7,6 +7,9 @@ using UnityEngine.InputSystem;
 public class FPSController : MonoBehaviour
 {
     public CameraController cameraScript;
+    public InventoryController inventoryScript;
+
+    private RaycastHit interactItem;
 
     bool crouchToggled;
     public bool isCrouching;
@@ -61,6 +64,8 @@ public class FPSController : MonoBehaviour
 
         playerActions.PlayerControls.ChangeCamera.performed += ChangeCamera;
         playerActions.PlayerControls.ChangeCamera.Enable();
+
+        playerActions.PlayerControls.Interact.performed += InteractWith;
     }
 
 
@@ -196,5 +201,11 @@ public class FPSController : MonoBehaviour
             cc.center = new Vector3(0, COLLIDER_NORMAL_CENTER_Y, 0);
             cameraScript.ToggleCameraCrouch(false);
         }
+    }
+
+
+    private void InteractWith(InputAction.CallbackContext obj)
+    {
+        
     }
 }

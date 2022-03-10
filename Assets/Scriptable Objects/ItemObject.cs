@@ -11,7 +11,8 @@ public class ItemObject : ScriptableObject
     {
         NORMAL,
         CONSUMABLE,
-        EQUIPABLE
+        EQUIPABLE,
+        BLANK
     }
     public string itemName;
     public string itemDesc;
