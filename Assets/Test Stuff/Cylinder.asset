@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34a482b3958f7f4e8d10e8dcff930ee, type: 3}
+  m_Name: Cylinder
+  m_EditorClassIdentifier: 
+  itemName: Cylinder
+  itemDesc: MMMMMMMM ROUND
+  hasInternalStorage: 0
+  internalStorage: 0
+  maxAmountHeld: 12
+  itemSprite: {fileID: 21300000, guid: 81e89f9f7e3aef24ba538d14e1df77d0, type: 3}
+  itemType: 1
+  itemObject: {fileID: 1497133815185526615, guid: 48e838078720a774cb62aa15e17acef6,
+    type: 3}
+  colliderCenter: {x: 0, y: 0, z: 0}
+  colliderSize: {x: 1, y: 1, z: 1}
+  useSelector: 3

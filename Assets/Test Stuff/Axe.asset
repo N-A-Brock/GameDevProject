@@ -13,8 +13,14 @@ MonoBehaviour:
   m_Name: Axe
   m_EditorClassIdentifier: 
   itemName: Axe
-  itemDesc: An old, rusty, woodcutting axe
-  itemSprite: {fileID: 2800000, guid: 602cb87b6a29443b8636370ea0751574, type: 3}
+  itemDesc: Chop Chop Chop
+  hasInternalStorage: 0
+  internalStorage: 0
+  maxAmountHeld: 1
+  itemSprite: {fileID: 21300000, guid: a6c5bcee2587ce147818f24dc97c8ee3, type: 3}
   itemType: 2
-  itemModel: {fileID: 919132149155446097, guid: c8e09328d0e36b144a8bb5f96bdba28f,
+  itemObject: {fileID: 919132149155446097, guid: ae79eb4b82b3e454fa258e4df60e2514,
     type: 3}
+  colliderCenter: {x: 0, y: 0, z: 0}
+  colliderSize: {x: 0.2, y: 0.5, z: 1}
+  useSelector: 1

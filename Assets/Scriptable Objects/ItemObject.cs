@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -9,7 +10,7 @@ public class ItemObject : ScriptableObject
 {
     public enum ItemType
     {
-        NORMAL,
+        OTHER,
         CONSUMABLE,
         EQUIPABLE,
         BLANK
@@ -17,9 +18,23 @@ public class ItemObject : ScriptableObject
     public string itemName;
     public string itemDesc;
 
-    public Texture itemSprite;
-    public ItemType itemType;
-    public GameObject itemModel;
+    public bool hasInternalStorage;
+    public int internalStorage;
 
+    public int maxAmountHeld;
+
+    public Sprite itemSprite;
+    public ItemType itemType;
+    public GameObject itemObject;
+
+    public Vector3 colliderCenter;
+    public Vector3 colliderSize;
+
+    public int useSelector;
+
+    public void UseItem(int selection)
+    {
+        
+    }
 
 }
