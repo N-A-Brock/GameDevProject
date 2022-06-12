@@ -31,28 +31,25 @@ public class InventoryController : MonoBehaviour
 
     void ConstructSlots()
     {
-        Debug.Log("This is where the fun begins");
-
-
-        InventorySlot toolSlotA = new InventorySlot(0, 0, blankObject, uiScript.toolAssemblies[0].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.toolAssemblies[0].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.toolAssemblies[0].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot toolSlotB = new InventorySlot(0, 0, blankObject, uiScript.toolAssemblies[1].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.toolAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.toolAssemblies[1].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot lightSlotA = new InventorySlot(0, 0, blankObject, uiScript.toolAssemblies[2].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.toolAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.toolAssemblies[2].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot lightSlotB = new InventorySlot(0, 0, blankObject, uiScript.toolAssemblies[3].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.toolAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.toolAssemblies[3].GetComponentInChildren<TextMeshProUGUI>());
+        InventorySlot toolSlotA = new InventorySlot(0, 0, blankObject, uiScript.toolDisplayButtons[0], uiScript.toolUseButtons[0]);
+        InventorySlot toolSlotB = new InventorySlot(0, 0, blankObject, uiScript.toolDisplayButtons[1], uiScript.toolUseButtons[1]);
+        InventorySlot lightSlotA = new InventorySlot(0, 0, blankObject, uiScript.toolDisplayButtons[2], uiScript.toolUseButtons[2]);
+        InventorySlot lightSlotB = new InventorySlot(0, 0, blankObject, uiScript.toolDisplayButtons[3], uiScript.toolUseButtons[3]);
         this.toolSlots = new InventorySlot[] { toolSlotA, toolSlotB, lightSlotA, lightSlotB };
 
-        InventorySlot consumableSlotA = new InventorySlot(0, null, blankObject, uiScript.consumableAssemblies[0].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.consumableAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.consumableAssemblies[0].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot consumableSlotB = new InventorySlot(0, null, blankObject, uiScript.consumableAssemblies[1].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.consumableAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.consumableAssemblies[1].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot consumableSlotC = new InventorySlot(0, null, blankObject, uiScript.consumableAssemblies[2].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.consumableAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.consumableAssemblies[2].GetComponentInChildren<TextMeshProUGUI>());
+        InventorySlot consumableSlotA = new InventorySlot(0, null, blankObject, uiScript.consumableDisplayButtons[0], uiScript.consumableUseButtons[0]);
+        InventorySlot consumableSlotB = new InventorySlot(0, null, blankObject, uiScript.consumableDisplayButtons[1], uiScript.consumableUseButtons[1]);
+        InventorySlot consumableSlotC = new InventorySlot(0, null, blankObject, uiScript.consumableDisplayButtons[2], uiScript.consumableUseButtons[2]);
         this.consumableSlots = new InventorySlot[] { consumableSlotA, consumableSlotB, consumableSlotC };
 
-        InventorySlot otherSlotA = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[0].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[0].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotB = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[1].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[1].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotC = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[2].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[2].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotD = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[3].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[3].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotE = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[4].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[0].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotF = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[5].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[1].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotG = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[6].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[2].GetComponentInChildren<TextMeshProUGUI>());
-        InventorySlot otherSlotH = new InventorySlot(0, null, blankObject, uiScript.otherAssemblies[7].transform.Find("ButtonDisplay").GetComponent<Button>(), uiScript.otherAssemblies[0].transform.Find("ButtonUse").GetComponent<Button>(), uiScript.otherAssemblies[3].GetComponentInChildren<TextMeshProUGUI>());
+        InventorySlot otherSlotA = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotB = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotC = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotD = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotE = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotF = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotG = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
+        InventorySlot otherSlotH = new InventorySlot(0, null, blankObject, uiScript.otherDisplayButtons[0], uiScript.otherUseButtons[0]);
         this.otherSlots = new InventorySlot[] { otherSlotA, otherSlotB, otherSlotC, otherSlotD, otherSlotE, otherSlotF, otherSlotG, otherSlotH };
     }
     
@@ -141,35 +138,89 @@ public class InventoryController : MonoBehaviour
     public void UpdateInventory(InventorySlot slotToUpdate)
     {
         slotToUpdate.slotDisplayButton.image.sprite = slotToUpdate.itemObj.itemSprite;//variables being assigned are null
-        slotToUpdate.slotText.text = slotToUpdate.quantity.ToString();
+        slotToUpdate.slotDisplayText.text = slotToUpdate.quantity.ToString();
 
+    }
+
+
+    public void UpdateInternalQuantity(InventorySlot slotToUpdate)
+    {
+        slotToUpdate.slotDisplayButton.transform.Find("IntText").GetComponent<TextMeshProUGUI>().text = (slotToUpdate.internalAmount + "/" + slotToUpdate.itemObj.maxAmountHeld);
+    }
+
+
+    public void UseItem(InventorySlot slotToUpdate)
+    {
+        switch (slotToUpdate.itemObj.itemType)
+        {
+            case ItemObject.ItemType.OTHER:
+                Debug.Log("Eventual animation reference i guess");
+                break;
+
+            case ItemObject.ItemType.CONSUMABLE:
+                Debug.Log("Consumable used");
+                foreach (InventorySlot slot in toolSlots)
+                {
+                    if (slot.itemObj = slotToUpdate.itemObj.useTarget)
+                    {
+                        //slot.internalAmount = 
+                    }
+                }
+                break;
+
+            case ItemObject.ItemType.EQUIPABLE:
+                break;
+            case ItemObject.ItemType.BLANK:
+                break;
+            default:
+                break;
+        }
     }
 }
 
 public class InventorySlot
 {
-    public InventorySlot(int quan, int? intamn, ItemObject defaultItemObj, Button slotDisButt, Button slotUseButt, TextMeshProUGUI slotTxt)
+
+    public int internalAmount; //For items that can hold some quantity of item inside itself, this value denotes the numerator of that fraction (denominator found in itemObject.
+    public int quantity;
+    public ItemObject itemObj;
+    public Button slotDisplayButton;
+    public Button slotUseButton;
+    public TextMeshProUGUI slotDisplayText;
+    public TextMeshProUGUI slotUseText;
+
+
+    public InventorySlot(int quan, int? intamn, ItemObject defaultItemObj, Button slotDisButt, Button slotUseButt)
     {
         itemObj = defaultItemObj;
         quantity = quan;
         slotDisplayButton = slotDisButt;
         slotUseButton = slotUseButt;
-        slotText = slotTxt;
-
+        slotDisplayText = slotDisButt.GetComponentInChildren<TextMeshProUGUI>();
+        slotUseText = slotUseButt.GetComponentInChildren<TextMeshProUGUI>();
         AssignToButtonScript();
-
+        switch (itemObj.itemType) //This doesnt work
+        {
+            case ItemObject.ItemType.OTHER:
+                slotUseText.text = "Hold";
+                break;
+            case ItemObject.ItemType.CONSUMABLE:
+                slotUseText.text = "Use";
+                break;
+            case ItemObject.ItemType.EQUIPABLE:
+                slotUseText.text = "Equip";
+                break;
+            case ItemObject.ItemType.BLANK:
+                break;
+            default:
+                break;
+        }
     }
 
     public void AssignToButtonScript()
     {
         slotDisplayButton.GetComponent<InvButtonScript>().attatchedSlot = this;
+        slotUseButton.GetComponent<InvButtonScript>().attatchedSlot = this;
+        
     }
-
-    public int internalAmount;
-    public int quantity;
-    public ItemObject itemObj;
-    public Button slotDisplayButton;
-    public Button slotUseButton;
-    public TextMeshProUGUI slotText;
-    
 }

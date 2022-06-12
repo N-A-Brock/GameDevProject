@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class InvButtonScript : MonoBehaviour, IPointerEnterHandler
+public class InvButtonScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public InventorySlot attatchedSlot;
     public TextMeshProUGUI descName;
@@ -30,11 +30,20 @@ public class InvButtonScript : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!(attatchedSlot.itemObj.itemType == ItemObject.ItemType.BLANK))
+        if ((this.name == "ButtonDisplay") && !(attatchedSlot.itemObj.itemType == ItemObject.ItemType.BLANK))
         {
             descName.text = attatchedSlot.itemObj.itemName;
             descBody.text = attatchedSlot.itemObj.itemDesc;
         }
         
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (this.name == "ButtonUse")
+        {
+            attatchedSlot.slotDisplayButton.gameObject.SetActive(true);
+            gameObject.SetActive(false);
+        }
     }
 }

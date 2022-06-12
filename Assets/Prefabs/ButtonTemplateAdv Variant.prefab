@@ -145,7 +145,7 @@ PrefabInstance:
     - target: {fileID: 4958355933645572736, guid: 4327b05092a61674f85810b8071bc208,
         type: 3}
       propertyPath: m_Name
-      value: ButtonAdv
+      value: ButtonDisplay
       objectReference: {fileID: 0}
     - target: {fileID: 7200281535162236893, guid: 4327b05092a61674f85810b8071bc208,
         type: 3}

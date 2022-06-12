@@ -13,9 +13,13 @@ public class UIController : MonoBehaviour
     public GameObject pausePanel;
     public GameObject hudPanel;
 
-    public GameObject[] toolAssemblies;
-    public GameObject[] consumableAssemblies;
-    public GameObject[] otherAssemblies;
+    public Button[] toolDisplayButtons;
+    public Button[] consumableDisplayButtons;
+    public Button[] otherDisplayButtons;
+
+    public Button[] toolUseButtons;
+    public Button[] consumableUseButtons;
+    public Button[] otherUseButtons;
 
 
 

@@ -32,9 +32,21 @@ public class ItemObject : ScriptableObject
 
     public int useSelector;
 
-    public void UseItem(int selection)
-    {
-        
-    }
+    public ItemObject useTarget;
 
+    public int ConsumableUseAmount()
+    {
+        switch (itemName)
+        {
+            case "Oil":
+                return (60);
+            case "Ammo":
+                return (1);
+            case "Capacitor":
+                return (1);
+            default:
+                return (1);
+                break;
+        }
+    }
 }
